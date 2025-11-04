@@ -1,0 +1,82 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environment
+cnn_env/
+venv/
+ENV/
+env/
+.venv
+
+# TensorFlow/Keras Model Files
+*.keras
+*.h5
+*.pb
+*.pkl
+*.joblib
+
+# Training Data (Large datasets - should be downloaded separately)
+data/train_data/
+data/test_data/
+data/drive_data/
+
+# Gradio
+gradio/.gradio/
+*.pem
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.temp
+
+# Audio files (if large or regeneratable)
+# *.mp3
+
+# Keep existing entries
+/Data
+/TrainData
+/TrainDataa
+/Dataa
+/~
+tf_test.py
+/train
+/newTest
+/VGG_Naruto_Model2
