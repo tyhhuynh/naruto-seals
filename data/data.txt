@@ -1,5 +1,6 @@
 this is the folder where training and testing data will be placed
-.      
+
+==== 
  /train_data
   /bird (class 1 dir)
   /boar (class 2 dir)
@@ -8,7 +9,8 @@ this is the folder where training and testing data will be placed
   /bird (class 1 dir)
   /boar (class 2 dir)
   ... (rest of classes)
+====
 
-make sure all images are correctly placed in the correct directories.
+make sure all images are correctly placed in the appropriate directories
 
-execute <python data\data_collection_script.py> to start collecting
+execute <python data\data_collection_script.py> to collect data
