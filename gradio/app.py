@@ -4,13 +4,12 @@ import cv2
 import tensorflow as tf
 import json
 from pathlib import Path
-from PIL import Image
 
 # Global state
 current_frame = None
 processing = False
 
-MODEL_PATH = "VGG16-final.keras"
+MODEL_PATH = "VGG16-va93.keras"
 model = tf.keras.models.load_model(MODEL_PATH)
 print(f"Model loaded successfully from {MODEL_PATH}")
 
@@ -114,15 +113,14 @@ custom_css = """
 """
 
 with gr.Blocks(css=custom_css) as demo:
-    gr.Markdown("# Naruto Hand Seal Demo", elem_classes=["center-title"])
-    gr.Markdown("## Instructions:", elem_classes=["center-title"])
     gr.Markdown("""
                 <div style="text-align: center; margin: 0 auto; max-width: 800px;">
+                    <h1> Naruto Hand Seal Demo </h1>
+                    <h2>Instructions:</h2>
                     <div style="text-align: left; display: inline-block;">
-                        <h4>1. Click on the Webcam Feed ('Click to Access Webcam') & connect with your webcam</h4>
-                        <h4>2. Make sure your face is NOT visible in the webcam display (for a better UX)</h4>
-                        <h4>3. Click on 'Record'</h4>
-                        <h4>4. Start signing some hand seals from the anime Naruto.</h4>
+                        <h4>1. Click on the Webcam Feed ('Click to Access Webcam') & connect with your desired webcam</h4>
+                        <h4>2. Make sure your hands are the ONLY things in the webcam frame (for better UX)</h4>
+                        <h4>3. Click on 'Record' and start signing different Seals from the Naruto anime</h4>
                     </div>
                 </div>
                 """)

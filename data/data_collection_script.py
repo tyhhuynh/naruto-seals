@@ -3,7 +3,6 @@ import os
 
 from cv2 import waitKey
 
-#Sets to default camera
 camera = cv.VideoCapture(0)
 
 if not camera.isOpened():
@@ -13,7 +12,7 @@ if not camera.isOpened():
 Labels = ["bird", "boar", "dog", "dragon", "hare", "horse", "monkey", "ox", "ram", "rat", "serpent", "tiger"]
 
 for label in Labels:
-    folder_path = f'./data/test_data/{label}'
+    folder_path = f'./data/drive_data/{label}'
     if not os.path.exists(folder_path):
         os.makedirs(folder_path, exist_ok=True)
 
@@ -21,7 +20,7 @@ for folder in Labels:
 
     count = 0
 
-    print("Press 'x' for "+folder)
+    print("Press 'x' for " + folder)
     userinput = input()
     if userinput != 'x':
         print("Wrong Input, terminating...")
@@ -48,7 +47,7 @@ for folder in Labels:
     
     waitKey(3000)
     
-    while count < 10:
+    while count < 50:
 
         status, frame = camera.read()
 
@@ -59,7 +58,7 @@ for folder in Labels:
         gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
         cv.imshow("Video Window",gray)
         gray = cv.resize(gray, (600,400))
-        cv.imwrite('data/drive_data/' + folder + '/' + folder + str(count) + '-3.jpg', gray)
+        cv.imwrite('data/drive_data/' + folder + '/' + folder + str(count) + '.jpg', gray)
         count = count + 1
         waitKey(100)
         if cv.waitKey(1) == ord('q'):
