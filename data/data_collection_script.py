@@ -46,13 +46,9 @@ for folder in Labels:
     cv.destroyWindow("Preview - Press 'p' to start, 'q' to quit")
     
     waitKey(3000)
-    
-<<<<<<< HEAD
-    while count < 50:
-=======
-    while count < 10: # pics per animal
->>>>>>> 133981086cc31cbac3870ebdaeaa4d05b21cc1e7
 
+    while count < 10: # pics per animal
+        
         status, frame = camera.read()
 
         if not status:
