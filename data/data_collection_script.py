@@ -47,7 +47,11 @@ for folder in Labels:
     
     waitKey(3000)
     
+<<<<<<< HEAD
     while count < 50:
+=======
+    while count < 10: # pics per animal
+>>>>>>> 133981086cc31cbac3870ebdaeaa4d05b21cc1e7
 
         status, frame = camera.read()
 
