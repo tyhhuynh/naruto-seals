@@ -5,7 +5,6 @@ import tensorflow as tf
 import json
 from pathlib import Path
 
-# Global state
 current_frame = None
 processing = False
 
@@ -39,48 +38,30 @@ def preprocess_frame(frame):
     - Normalize by dividing by 255.0
     - Add batch dimension
     """
-    # Resize to 224x224 (model input size)
+    
     resized = cv2.resize(frame, (224, 224))
     
-    # Ensure RGB (Gradio gives us RGB, but be safe)
+
     if len(resized.shape) == 3 and resized.shape[2] == 3:
-        # Already RGB, good!
         pass
     else:
-        # Convert BGR to RGB if needed
         resized = cv2.cvtColor(resized, cv2.COLOR_BGR2RGB)
     
-    # Normalize by dividing by 255.0 (matches training: rescale=1./255)
     normalized = resized.astype(np.float32) / 255.0
-    
-    # Add batch dimension: (224, 224, 3) -> (1, 224, 224, 3)
     batch_input = np.expand_dims(normalized, axis=0)
-    
     return batch_input
 
 def predict_hand_sign(frame):
     """
     Run model inference and return top prediction with confidence
     """
-    # Preprocess frame
     preprocessed = preprocess_frame(frame)
-    
-    # Run model prediction
-    predictions = model.predict(preprocessed, verbose=0)  # verbose=0 suppresses output
-    
-    # Get probabilities for all classes
-    probabilities = predictions[0]  # Remove batch dimension
-    
-    # Get top prediction
+    predictions = model.predict(preprocessed, verbose=0)
+    probabilities = predictions[0]
     top_index = np.argmax(probabilities)
     top_confidence = float(probabilities[top_index])
-    
-    # Convert index to label name
     top_label = label_names[top_index]
-    
-    # Format confidence as percentage
     confidence_percent = int(top_confidence * 100)
-    
     return top_label, top_confidence, probabilities
 
 def process_frame(frame):
@@ -88,10 +69,7 @@ def process_frame(frame):
     if frame is None:
         return "No frame detected"
     
-    # Run model prediction
     top_label, top_confidence, all_probs = predict_hand_sign(frame)
-    
-    # Format prediction text
     confidence_percent = int(top_confidence * 100)
     prediction_text = f"{top_label.capitalize()}: {confidence_percent}%"
     
@@ -103,7 +81,6 @@ def process_frame(frame):
         top3_text += f" - {label}: {conf}%\n"
     
     full_prediction = prediction_text + "\n" + top3_text
-    
     return full_prediction
 
 custom_css = """
