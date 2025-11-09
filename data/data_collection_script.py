@@ -47,7 +47,7 @@ for folder in Labels:
     
     waitKey(3000)
 
-    while count < 10: # pics per animal
+    while count < 100: # pics per class
         
         status, frame = camera.read()
 
@@ -58,7 +58,7 @@ for folder in Labels:
         gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
         cv.imshow("Video Window",gray)
         gray = cv.resize(gray, (600,400))
-        cv.imwrite('data/drive_data/' + folder + '/' + folder + str(count) + '.jpg', gray)
+        cv.imwrite('data/drive_data/' + folder + '/' + folder + str(count) + '.jpg', gray) # collected images location
         count = count + 1
         waitKey(100)
         if cv.waitKey(1) == ord('q'):
