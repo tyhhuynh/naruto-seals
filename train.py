@@ -4,8 +4,8 @@ from tensorflow.keras.models import Model
 from tensorflow.keras.layers import Dense, Dropout
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
-PATH_TO_TRAIN_DATA = "/content/drive/My Drive/cnn/data/train_data"
-PATH_TO_TEST_DATA = "/content/drive/My Drive/cnn/data/test_data"
+PATH_TO_TRAIN_DATA = "data/train_data"
+PATH_TO_TEST_DATA = "data/test_data"
 BATCH_SIZE = 64
 
 if __name__ ==  '__main__':
@@ -30,8 +30,8 @@ if __name__ ==  '__main__':
                     class_mode='categorical',
                     batch_size=BATCH_SIZE)
 
-    train_generator  = get_datagen(PATH_TO_TRAIN_DATA, True)
-    test_generator   = get_datagen(PATH_TO_TEST_DATA, False)
+    train_generator = get_datagen(PATH_TO_TRAIN_DATA, True)
+    test_generator = get_datagen(PATH_TO_TEST_DATA, False)
 
     def create_vgg16_model():
         pretrained_model = VGG16(include_top=False,
@@ -73,4 +73,4 @@ if __name__ ==  '__main__':
         callbacks=[early_stopper, rlrop],
     )
 
-    model.save("/content/drive/My Drive/cnn/VGG16.keras")
+    model.save("VGG16.keras")
