@@ -35,8 +35,8 @@ This project utilizes ML to recognize the 12 hand signs from [Naruto](https://na
 
 
 ## Results
-- **Validation Accuracy:** ~93.4%
-- **Training Time:** ~1 hour (10-20 epochs on Google Colab)
+- **Validation Accuracy:** ~93.8%
+- **Training Time:** ~1 hour (14 epochs on Google Colab)
 - **Optimization:** Adam optimizer (lr=0.0001) with early stopping
 
 ## Technologies
