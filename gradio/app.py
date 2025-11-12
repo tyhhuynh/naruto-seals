@@ -5,8 +5,10 @@ import tensorflow as tf
 import json
 from pathlib import Path
 
-current_frame = None
-processing = False
+CONFIDENCE_THRESHOLD = 0.8
+MAX_SEQUENCE_LENGTH = 15
+REQUIRED_DETECTIONS = 2
+AUDIO_PLAY_DURATION = 20
 
 MODEL_PATH = "VGG16-va93.keras"
 model = tf.keras.models.load_model(MODEL_PATH)
@@ -17,8 +19,6 @@ with open("class_indices.json", "r") as f:
 
 index_to_label = {str(v): k for k, v in class_indices.items()}
 label_names = list(class_indices.keys())
-
-
 
 hand_seal_images = {}
 hand_seals_dir = Path("hand-seals")
@@ -61,15 +61,48 @@ def predict_hand_sign(frame):
     top_index = np.argmax(probabilities)
     top_confidence = float(probabilities[top_index])
     top_label = label_names[top_index]
-    confidence_percent = int(top_confidence * 100)
     return top_label, top_confidence, probabilities
 
-def process_frame(frame):
-    """Process frame and return prediction"""
+def check_chidori_sequence(history):
+    """
+    Check if the prediction history contains the Chidori sequence: Ox → Hare → Monkey
+    Each seal must appear at least REQUIRED_DETECTIONS times in the sequence.
+    """
+    if len(history) < REQUIRED_DETECTIONS * 3:
+        return False
+    
+    ox_count = 0
+    hare_count = 0
+    monkey_count = 0
+    state = "looking_for_ox"
+    
+    for seal in history:
+        if state == "looking_for_ox" and seal == "ox":
+            ox_count += 1
+            if ox_count >= REQUIRED_DETECTIONS:
+                state = "looking_for_hare"
+        elif state == "looking_for_hare" and seal == "hare":
+            hare_count += 1
+            if hare_count >= REQUIRED_DETECTIONS:
+                state = "looking_for_monkey"
+        elif state == "looking_for_monkey" and seal == "monkey":
+            monkey_count += 1
+            if monkey_count >= REQUIRED_DETECTIONS:
+                return True
+    
+    return False
+
+def process_frame(frame, sequence_history, audio_counter):
     if frame is None:
-        return "No frame detected"
+        return "No frame detected", None, sequence_history, audio_counter
     
     top_label, top_confidence, all_probs = predict_hand_sign(frame)
+    
+    if audio_counter == 0 and top_confidence >= CONFIDENCE_THRESHOLD:
+        sequence_history.append(top_label)
+        if len(sequence_history) > MAX_SEQUENCE_LENGTH:
+            sequence_history.pop(0)
+
     confidence_percent = int(top_confidence * 100)
     prediction_text = f"{top_label.capitalize()}: {confidence_percent}%"
     
@@ -78,10 +111,28 @@ def process_frame(frame):
     for idx in top3_indices:
         label = label_names[idx]
         conf = int(all_probs[idx] * 100)
-        top3_text += f" - {label}: {conf}%\n"
+        top3_text += f" - {label.capitalize()}: {conf}%\n"
     
-    full_prediction = prediction_text + "\n" + top3_text
-    return full_prediction
+    audio_file = None
+    jutsu_detected = ""
+    
+    if audio_counter == 0 and check_chidori_sequence(sequence_history):
+        audio_counter = AUDIO_PLAY_DURATION
+        sequence_history.clear()
+    
+    if audio_counter > 0:
+        audio_file = "chidori SFX.mp3"
+        jutsu_detected = "\n\n⚡CHIDORI DETECTED⚡\nSequence: Ox → Hare → Monkey"
+        audio_counter -= 1
+    
+    if len(sequence_history) > 0:
+        recent_seals = " → ".join([s.capitalize() for s in sequence_history[-6:]])
+        sequence_text = f"\n\nRecent Sequence:\n{recent_seals}"
+    else:
+        sequence_text = "\n\nRecent Sequence: (none)"
+    
+    full_prediction = prediction_text + "\n" + top3_text + sequence_text + jutsu_detected
+    return full_prediction, audio_file, sequence_history, audio_counter
 
 custom_css = """
     .center-title {
@@ -101,6 +152,9 @@ with gr.Blocks(css=custom_css) as demo:
                     </div>
                 </div>
                 """)
+    
+    sequence_state = gr.State([])
+    audio_counter_state = gr.State(0)
     
     with gr.Row():
 
@@ -148,10 +202,16 @@ with gr.Blocks(css=custom_css) as demo:
                 lines=8
             )
 
+            audio_output = gr.Audio(
+                label="Jutsu SFX",
+                autoplay=True,
+                visible=True
+            )
+
     webcam_input.stream(
         fn=process_frame,
-        inputs=webcam_input,
-        outputs=prediction_display,
+        inputs=[webcam_input, sequence_state, audio_counter_state],
+        outputs=[prediction_display, audio_output, sequence_state, audio_counter_state],
         show_progress="hidden"
     )
 
